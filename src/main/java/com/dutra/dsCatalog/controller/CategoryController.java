@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/categories")
@@ -22,8 +23,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CategoryDto>> findAll(Pageable pageable) {
-        return ResponseEntity.ok().body(service.findAllPaged(pageable));
+    public ResponseEntity<List<CategoryDto>> findAll() {
+        return ResponseEntity.ok().body(service.findAllPaged());
     }
 
     @GetMapping(value = "/{id}")
