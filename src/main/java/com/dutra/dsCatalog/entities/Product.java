@@ -1,5 +1,6 @@
 package com.dutra.dsCatalog.entities;
 
+import com.dutra.dsCatalog.utils.projection.IdProjection;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -10,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tb_product")
-public class Product implements Serializable {
+public class Product implements Serializable, IdProjection<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +44,7 @@ public class Product implements Serializable {
         return categories;
     }
 
+    @Override
     public Long getId() {
         return id;
     }

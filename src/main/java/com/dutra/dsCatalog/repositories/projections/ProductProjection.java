@@ -1,7 +1,8 @@
 package com.dutra.dsCatalog.repositories.projections;
 
-public interface ProductProjection {
+import com.dutra.dsCatalog.utils.projection.IdProjection;
 
-    Long getId();
+public interface ProductProjection extends IdProjection<Long> {
+
     String getName();
 }
