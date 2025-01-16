@@ -6,16 +6,20 @@ import com.dutra.dsCatalog.entities.Category;
 import com.dutra.dsCatalog.entities.Product;
 import com.dutra.dsCatalog.repositories.CategoryRepository;
 import com.dutra.dsCatalog.repositories.ProductRepository;
+import com.dutra.dsCatalog.repositories.projections.ProductProjection;
 import com.dutra.dsCatalog.services.exceptions.DataBaseException;
 import com.dutra.dsCatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -29,8 +33,21 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDto> findAllPaged(Pageable pageable, String name) {
-        return repository.findAllPaged(pageable, name).map(ProductDto::new);
+    public Page<ProductDto> findAllPaged(String name, String categoryId, Pageable pageable) {
+        List<Long> arrayIds = Arrays.asList();
+
+        if (!"0".equals(categoryId)) {
+            String[] vet = categoryId.split(",");
+            arrayIds = Arrays.stream(vet).map(Long::parseLong).toList();
+        }
+
+        Page<ProductProjection> page = repository.searchProducts(arrayIds, name, pageable);
+        List<Long> productsId = page.map(ProductProjection::getId).toList();
+        List<Product> products = repository.searchProductsWithCategories(productsId);
+
+        Page<ProductDto> pageDto = new PageImpl<>(products.stream().map(product -> new ProductDto(product, product.getCategories())).toList(),
+                page.getPageable(), page.getTotalElements());
+        return pageDto;
     }
 
     @Transactional(readOnly = true)

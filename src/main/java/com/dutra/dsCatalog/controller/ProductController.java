@@ -1,6 +1,7 @@
 package com.dutra.dsCatalog.controller;
 
 import com.dutra.dsCatalog.dtos.ProductDto;
+import com.dutra.dsCatalog.repositories.projections.ProductProjection;
 import com.dutra.dsCatalog.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.lang.reflect.Array;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/products")
@@ -24,9 +28,10 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDto>> findAll(Pageable pageable,
-                                                    @RequestParam(name = "name", defaultValue = "") String name) {
-        return ResponseEntity.ok().body(service.findAllPaged(pageable, name));
+    public ResponseEntity<Page<ProductDto>> searchAll(Pageable pageable,
+                                                             @RequestParam(name = "name", defaultValue = "") String name,
+                                                             @RequestParam(name = "categoryId", defaultValue = "0") String categoryId) {
+        return ResponseEntity.ok().body(service.findAllPaged(name, categoryId, pageable));
     }
 
     @GetMapping(value = "/{id}")

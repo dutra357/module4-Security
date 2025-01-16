@@ -13,9 +13,6 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("SELECT obj FROM Product obj WHERE UPPER(obj.name) LIKE UPPER(CONCAT('%', :name, '%'))")
-    Page<Product> findAllPaged(Pageable pageable, String name);
-
 	@Query(nativeQuery = true, value = """
 	SELECT DISTINCT tb_product.id, tb_product.name
 	FROM tb_product
@@ -34,4 +31,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	) AS tb_result
 	""")
 	Page<ProductProjection> searchProducts(List<Long> categoryIds, String name, Pageable pageable);
+
+	@Query("SELECT obj FROM Product obj JOIN FETCH obj.categories WHERE obj.id IN :productsIds ORDER BY obj.name")
+	List<Product> searchProductsWithCategories(List<Long> productsIds);
+
 }
