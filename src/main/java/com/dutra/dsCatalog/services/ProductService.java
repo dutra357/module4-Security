@@ -9,6 +9,7 @@ import com.dutra.dsCatalog.repositories.ProductRepository;
 import com.dutra.dsCatalog.repositories.projections.ProductProjection;
 import com.dutra.dsCatalog.services.exceptions.DataBaseException;
 import com.dutra.dsCatalog.services.exceptions.ResourceNotFoundException;
+import com.dutra.dsCatalog.utils.Util;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDto> findAllPaged(String name, String categoryId, Pageable pageable) {
+    public Page<ProductDto> findAllPaged(String name, String categoryId, Pageable pageable, String sortParameter) {
         List<Long> arrayIds = Arrays.asList();
 
         if (!"0".equals(categoryId)) {
@@ -44,6 +45,8 @@ public class ProductService {
         Page<ProductProjection> page = repository.searchProducts(arrayIds, name, pageable);
         List<Long> productsId = page.map(ProductProjection::getId).toList();
         List<Product> products = repository.searchProductsWithCategories(productsId);
+
+        products = Util.replace(page.getContent(), products);
 
         Page<ProductDto> pageDto = new PageImpl<>(products.stream().map(product -> new ProductDto(product, product.getCategories())).toList(),
                 page.getPageable(), page.getTotalElements());

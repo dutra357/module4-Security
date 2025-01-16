@@ -30,8 +30,9 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Page<ProductDto>> searchAll(Pageable pageable,
                                                              @RequestParam(name = "name", defaultValue = "") String name,
-                                                             @RequestParam(name = "categoryId", defaultValue = "0") String categoryId) {
-        return ResponseEntity.ok().body(service.findAllPaged(name, categoryId, pageable));
+                                                             @RequestParam(name = "categoryId", defaultValue = "0") String categoryId,
+                                                      @RequestParam(name = "sort", defaultValue = "name") String sortParameter) {
+        return ResponseEntity.ok().body(service.findAllPaged(name, categoryId, pageable, sortParameter));
     }
 
     @GetMapping(value = "/{id}")
