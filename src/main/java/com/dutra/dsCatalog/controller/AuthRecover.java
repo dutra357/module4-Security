@@ -2,7 +2,6 @@ package com.dutra.dsCatalog.controller;
 
 import com.dutra.dsCatalog.dtos.EmailDto;
 import com.dutra.dsCatalog.services.AuthService;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
