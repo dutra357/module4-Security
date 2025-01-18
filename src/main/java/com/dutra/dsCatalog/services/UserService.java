@@ -75,9 +75,13 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserDto InsertUser(UserInsertDto userInsertDto) {
         User user = new User();
-        user.setPassword(passwordEncoder.encode(userInsertDto.getPassword()));
 
         copyToEntity(user, userInsertDto);
+        user.getRoles().clear();
+
+        Role role = roleRepository.findByAuthority("ROLE_OPERATOR");
+        user.getRoles().add(role);
+        user.setPassword(passwordEncoder.encode(userInsertDto.getPassword()));
 
         return new UserDto(repository.save(user));
     }

@@ -23,7 +23,6 @@ public class UserController {
         this.service = service;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<Page<UserDto>> findAll(Pageable pageable) {
         return ResponseEntity.ok().body(service.findAllPaged(pageable));
