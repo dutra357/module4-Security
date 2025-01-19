@@ -22,6 +22,7 @@ public class EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
 
+            message.setSubject(subject);
             message.setFrom(emailForm);
             message.setTo(to);
             message.setText(body);
