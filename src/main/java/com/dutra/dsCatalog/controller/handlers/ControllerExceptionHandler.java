@@ -3,6 +3,7 @@ package com.dutra.dsCatalog.controller.handlers;
 import com.dutra.dsCatalog.dtos.exceptions.CustomError;
 import com.dutra.dsCatalog.dtos.exceptions.ValidationError;
 import com.dutra.dsCatalog.services.exceptions.DataBaseException;
+import com.dutra.dsCatalog.services.exceptions.EmailException;
 import com.dutra.dsCatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -44,5 +45,13 @@ public class ControllerExceptionHandler {
         }
 
         return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(EmailException.class)
+    public ResponseEntity<CustomError> emailSenderException(EmailException exception, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        CustomError customError = new CustomError(Instant.now(), status.value(), "E-mail exception.", exception.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(status).body(customError);
     }
 }

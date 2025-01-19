@@ -16,9 +16,9 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
-    //@Value("{email.password-recover.token.minutes}")
-    private Long tokenMinutes = 30L;
-    @Value("{email.password-recover.uri}")
+    @Value("${email.password-recover.token.minutes}")
+    private Long tokenMinutes;
+    @Value("${email.password-recover.uri}")
     private String linkRecovery;
 
     private final EmailService emailService;
@@ -37,7 +37,9 @@ public class AuthService {
         }
 
         PasswordRecover passwordRecover = new PasswordRecover();
+
         passwordRecover.setEmail(email.getEmail());
+
         String token = UUID.randomUUID().toString();
         passwordRecover.setToken(token);
         passwordRecover.setExpiration(Instant.now().plusSeconds(tokenMinutes * 60));
