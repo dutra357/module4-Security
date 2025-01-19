@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,13 +31,16 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
     private final RoleRepository roleRepository;
+    private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository repository,
                        RoleRepository roleRepository,
+                       @Lazy AuthService authService,
                        @Lazy PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.roleRepository = roleRepository;
+        this.authService = authService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -58,6 +60,12 @@ public class UserService implements UserDetailsService {
             user.addRole(new Role(projectionEntity.getRoleId(), projectionEntity.getAuthority()));
         }
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto findAuthenticatedUser() {
+        User user = authService.authenticated();
+        return new UserDto(user);
     }
 
     @Transactional(readOnly = true)

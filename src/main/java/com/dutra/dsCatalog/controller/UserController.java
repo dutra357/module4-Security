@@ -23,6 +23,17 @@ public class UserController {
         this.service = service;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
+    @GetMapping(value = "/recover-me")
+    public ResponseEntity<UserDto> findAuthenticatedUser() {
+        UserDto userDto = service.findAuthenticatedUser();
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{id}").buildAndExpand(userDto.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(userDto);
+    }
+
     @GetMapping
     public ResponseEntity<Page<UserDto>> findAll(Pageable pageable) {
         return ResponseEntity.ok().body(service.findAllPaged(pageable));
